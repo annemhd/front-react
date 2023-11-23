@@ -4,6 +4,9 @@ import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
 
 const ContactsScreen = () => {
+    const token = localStorage.getItem('current-user')
+    const userInfos = jwtDecode(token)
+
     const [searchItem, setSearchItem] = useState('')
     const [users, setUsers] = useState([])
 
@@ -23,22 +26,38 @@ const ContactsScreen = () => {
     const handleSearch = async (e) => {
         const searchTerm = e.target.value
         setSearchItem(searchTerm)
-        console.log(searchTerm)
 
         if (searchTerm.trim() !== '') {
             setUsers(users.filter((user) => user.email.includes(searchTerm)))
             console.log(users)
         } else {
-            const { data } = await axios.get('http://localhost:8080/users')
-            setUsers(data)
+            const usersList = await axios.get('http://localhost:8080/users')
+            const contacts = await axios.get('http://localhost:8080/relations')
+            setUsers(usersList.data)
+
+            const a = contacts.data.filter((contact) => {
+                return contact.id_user === userInfos.id_user
+            })
+
+            const b = usersList.data
+                .map((user) => {
+                    const matchingContacts = a.filter((contact) => {
+                        return contact.id_contact === user.id_user
+                    })
+
+                    if (matchingContacts.length > 0) {
+                        return { ...user, matchingContacts }
+                    }
+                })
+                .filter(Boolean)
+
+            console.log(b)
         }
     }
 
     return (
         <div>
             <input type="text" placeholder="Search" value={searchItem} onChange={handleSearch} />
-
-            <p>Loading...</p>
 
             <ul>
                 {users.map((item) => (
