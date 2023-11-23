@@ -3,52 +3,48 @@ import { View, TextInput } from 'react-native'
 import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
 
-const ContactsScreen = async () => {
-    // const [searchTerm, setSearchTerm] = useState('')
-    // const [users, setUsers] = useState([])
-    // const [loading, setLoading] = useState(false)
+const ContactsScreen = () => {
+    const [searchItem, setSearchItem] = useState('')
+    const [users, setUsers] = useState([])
 
     useEffect(() => {
-        const fetchData = () => {
+        const fetchData = async () => {
             try {
-                const response = axios.get('http://localhost:8080/users')
-                // setUsers(data)
-                console.log(response)
+                const { data } = await axios.get('http://localhost:8080/users')
+                setUsers(data)
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
         }
 
         fetchData()
-
-        // console.log(users)
-
-        // if (searchTerm.trim() !== '') {
-        //     fetchData()
-        //     data = data.filter((user) => user.email === searchTerm)
-        // } else {
-        //     setData([]) // Clear the data if the search term is empty
-        // }
     }, [])
+
+    const handleSearch = async (e) => {
+        const searchTerm = e.target.value
+        setSearchItem(searchTerm)
+        console.log(searchTerm)
+
+        if (searchTerm.trim() !== '') {
+            setUsers(users.filter((user) => user.email.includes(searchTerm)))
+            console.log(users)
+        } else {
+            const { data } = await axios.get('http://localhost:8080/users')
+            setUsers(data)
+        }
+    }
 
     return (
         <div>
-            {/* <input
-                type="text"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            <input type="text" placeholder="Search" value={searchItem} onChange={handleSearch} />
 
-            {loading ? (
-                <p>Loading...</p>
-            ) : (
-                <ul>
-                    {data.map((item) => (
-                        <li key={item.id}>{item.name}</li>
-                    ))}
-                </ul>
-            )} */}
+            <p>Loading...</p>
+
+            <ul>
+                {users.map((item) => (
+                    <li key={item.id_user}>{item.username}</li>
+                ))}
+            </ul>
         </div>
     )
 }

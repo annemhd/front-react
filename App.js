@@ -24,9 +24,21 @@ const App = () => {
     ) : (
         <NavigationContainer>
             <Tab.Navigator>
-                <Tab.Screen name="Messages" component={MessagesScreen} />
-                <Tab.Screen name="Contacts" component={ContactsScreen} />
-                <Tab.Screen name="Profil" component={SettingsScreen} />
+                <Tab.Screen
+                    name="Messages"
+                    component={MessagesScreen}
+                    onPress={() => navigation.navigate('Messages')}
+                />
+                <Tab.Screen
+                    name="Contacts"
+                    component={ContactsScreen}
+                    onPress={() => navigation.navigate('Contacts')}
+                />
+                <Tab.Screen
+                    name="Profil"
+                    component={SettingsScreen}
+                    onPress={() => navigation.navigate('Settings')}
+                />
             </Tab.Navigator>
         </NavigationContainer>
     )
