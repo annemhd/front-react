@@ -15,7 +15,6 @@ const ContactsScreen = () => {
             try {
                 const usersList = await axios.get('http://localhost:8080/users')
                 const contacts = await axios.get('http://localhost:8080/relations')
-                setUsers(usersList.data)
 
                 const a = contacts.data.filter((contact) => {
                     return contact.id_user === userInfos.id_user
