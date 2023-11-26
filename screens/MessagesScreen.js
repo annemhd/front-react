@@ -19,20 +19,8 @@ const MessagesScreen = () => {
                 const messagesList = await axios.get('http://localhost:8080/messages')
 
                 setUsers(usersList.data)
-
-                const chatsTable = chatsList.data.filter((chat) => {
-                    return chat.members.includes(userInfos.id_user.toString())
-                })
-
-                const b = () => {
-                    const testConv = []
-                    chatsTable.forEach((chat) => {
-                        testConv.push(chat.members)
-                    })
-                    return testConv
-                }
-
-                setChats(b)
+                setChats(chatsList.data)
+                setMessages(messagesList.data)
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
@@ -41,33 +29,31 @@ const MessagesScreen = () => {
         fetchData()
     }, [])
 
-    // const c = users
-    //     .map((user) => {
-    //         const matchingChats = chats.filter((chat) => {
-    //             return user.id_user.toString().includes(chat[1])
-    //         })
+    const combinedArray = chats.map((chat) => {
+        const members = chat.members.map((memberId) => {
+            const user = users.find((user) => user.id_user.toString() === memberId)
+            return user
+        })
 
-    //         console.log(matchingChats)
+        const allMessages = messages.filter((message) => message.id_chat === chat.id_chat)
 
-    //         if (matchingChats.length > 0) {
-    //             // console.log(matchingChats)
-    //             return { ...user }
-    //         }
-    //     })
-    //     .filter(Boolean)
+        return { ...chat, members, allMessages }
+    })
 
-    // console.log('??? ', c)
-
-    console.log('Chats : ', chats)
+    console.log(combinedArray)
 
     return (
         <div>
-            {/* <input type="text" placeholder="Search" value={searchItem} onChange={handleSearch} /> */}
-            {/* <ul>
-                {chats.map((item) => (
-                    <span>{item.username}</span>
-                ))}
-            </ul> */}
+            {chats.map((innerArray, outerIndex) => (
+                <div key={outerIndex}>
+                    _____
+                    <div>
+                        {innerArray.map((user, innerIndex) => (
+                            <span key={innerIndex}>{user.username} </span>
+                        ))}
+                    </div>
+                </div>
+            ))}
         </div>
     )
 }
