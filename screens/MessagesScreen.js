@@ -29,7 +29,7 @@ const MessagesScreen = () => {
         fetchData()
     }, [])
 
-    const combinedArray = chats.map((chat) => {
+    const chatsInfos = chats.map((chat) => {
         const members = chat.members.map((memberId) => {
             const user = users.find((user) => user.id_user.toString() === memberId)
             return user
@@ -40,18 +40,20 @@ const MessagesScreen = () => {
         return { ...chat, members, allMessages }
     })
 
-    console.log(combinedArray)
+    console.log(chatsInfos)
 
     return (
         <div>
-            {chats.map((innerArray, outerIndex) => (
-                <div key={outerIndex}>
-                    _____
+            {chatsInfos.map((chat) => (
+                <div key={chat.id_chat}>
                     <div>
-                        {innerArray.map((user, innerIndex) => (
-                            <span key={innerIndex}>{user.username} </span>
-                        ))}
+                        {chat.members
+                            .filter((user) => user.id_user !== userInfos.id_user)
+                            .map((user) => (
+                                <span key={user.id_user}>{user.username} </span>
+                            ))}
                     </div>
+                    <div>{chat.allMessages[0].message}</div>
                 </div>
             ))}
         </div>
